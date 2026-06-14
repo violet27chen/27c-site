@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+{% block title %}夸克代下载 - 27c.site{% endblock %}
+{% block meta %}
+<meta name="description" content="夸克网盘代下载服务，不限速，支持海外用户，一键解析下载">
+{% endblock %}
+
+{% block content %}
+<div class="quark-page">
+    <div class="quark-hero">
+        <h1>夸克网盘代下载</h1>
+        <p class="subtitle">粘贴链接，高速下载，不限速</p>
+    </div>
+
+    <!-- Step 1: Input Link -->
+    <div class="quark-section" id="step-input">
+        <div class="input-group">
+            <input type="text" id="link-input" placeholder="粘贴夸克网盘分享链接..." 
+                   autocomplete="off" spellcheck="false">
+            <button id="parse-btn" onclick="parseLink()">解析</button>
+        </div>
+        <p class="hint">支持格式: https://pan.quark.cn/s/xxxxxx</p>
+    </div>
+
+    <!-- Step 2: File List -->
+    <div class="quark-section" id="step-files" style="display:none;">
+        <h2 id="file-list-title">选择文件</h2>
+        <div id="breadcrumb"></div>
+        <div id="file-list"></div>
+        <button id="back-btn" onclick="goBack()" class="btn-secondary">返回</button>
+    </div>
+
+    <!-- Step 3: Paying -->
+    <div class="quark-section" id="step-paying" style="display:none;">
+        <div class="spinner"></div>
+        <p>正在创建订单...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="quark-section" id="step-error" style="display:none;">
+        <p class="error-msg" id="error-text"></p>
+        <button onclick="resetForm()" class="btn-secondary">重试</button>
+    </div>
+</div>
+
+<style>
+.quark-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2em 1em;
+}
+
+.quark-hero {
+    text-align: center;
+    margin-bottom: 2em;
+}
+
+.quark-hero h1 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 0.3em;
+}
+
+.quark-hero .subtitle {
+    color: #888;
+    font-size: 0.95em;
+    margin: 0;
+}
+
+.quark-section {
+    margin-bottom: 1.5em;
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #333;
+}
+
+.input-group button {
+    padding: 12px 24px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.input-group button:hover {
+    background: #333;
+}
+
+.input-group button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.hint {
+    color: #999;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+#breadcrumb {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+#breadcrumb a {
+    color: #333;
+    text-decoration: none;
+}
+
+#breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+#file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.file-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+
+.file-card:hover {
+    border-color: #ccc;
+}
+
+.file-card.dir {
+    background: #f5f8ff;
+    border-color: #e0e8ff;
+}
+
+.file-card.dir:hover {
+    border-color: #b0c4ff;
+}
+
+.file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-meta {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.file-icon {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.file-action {
+    margin-left: 12px;
+    flex-shrink: 0;
+}
+
+.btn-download {
+    padding: 8px 16px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.btn-download:hover {
+    background: #333;
+}
+
+.btn-download:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    padding: 8px 16px;
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #eee;
+}
+
+.error-msg {
+    color: #dc2626;
+    text-align: center;
+    padding: 16px;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #eee;
+    border-top-color: #333;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+    .quark-page {
+        padding: 1em;
+    }
+    .input-group {
+        flex-direction: column;
+    }
+    .input-group button {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+let parsedData = null;
+let currentPath = [];  // [{fid, name}]
+let allFiles = [];
+
+function showStep(id) {
+    document.querySelectorAll('.quark-section').forEach(s => s.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+}
+
+function resetForm() {
+    document.getElementById('link-input').value = '';
+    parsedData = null;
+    currentPath = [];
+    allFiles = [];
+    showStep('step-input');
+}
+
+function goBack() {
+    if (currentPath.length > 0) {
+        currentPath.pop();
+        if (currentPath.length === 0) {
+            renderFiles(allFiles, parsedData.pwd_id, parsedData.stoken);
+        } else {
+            const folder = currentPath[currentPath.length - 1];
+            loadFolder(folder.fid);
+        }
+    } else {
+        showStep('step-input');
+    }
+}
+
+async function parseLink() {
+    const url = document.getElementById('link-input').value.trim();
+    if (!url) {
+        alert('请输入链接');
+        return;
+    }
+
+    const btn = document.getElementById('parse-btn');
+    btn.disabled = true;
+    btn.textContent = '解析中...';
+    showStep('step-input');
+
+    try {
+        const resp = await fetch('/quark/parse', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({url: url})
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || data.error) {
+            throw new Error(data.error || '解析失败');
+        }
+
+        parsedData = data;
+        allFiles = data.files;
+        currentPath = [];
+        renderFiles(data.files, data.pwd_id, data.stoken);
+        showStep('step-files');
+    } catch (e) {
+        document.getElementById('error-text').textContent = e.message;
+        showStep('step-error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '解析';
+    }
+}
+
+async function loadFolder(folderFid) {
+    showStep('step-paying');
+    
+    try {
+        const resp = await fetch('/quark/folder', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                pwd_id: parsedData.pwd_id,
+                stoken: parsedData.stoken,
+                folder_fid: folderFid
+            })
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || data.error) {
+            throw new Error(data.error || '解析失败');
+        }
+
+        renderFiles(data.files, parsedData.pwd_id, parsedData.stoken);
+        showStep('step-files');
+    } catch (e) {
+        document.getElementById('error-text').textContent = e.message;
+        showStep('step-error');
+    }
+}
+
+function renderFiles(files, pwdId, stoken) {
+    const container = document.getElementById('file-list');
+    const title = document.getElementById('file-list-title');
+    const breadcrumb = document.getElementById('breadcrumb');
+    container.innerHTML = '';
+
+    // Update title
+    if (currentPath.length > 0) {
+        title.textContent = currentPath[currentPath.length - 1].name;
+    } else {
+        title.textContent = '选择文件';
+    }
+
+    // Render breadcrumb
+    breadcrumb.innerHTML = '<a href="#" onclick="goToRoot(); return false;">根目录</a>';
+    currentPath.forEach((p, i) => {
+        breadcrumb.innerHTML += ` / <a href="#" onclick="goToLevel(${i}); return false;">${escapeHtml(p.name)}</a>`;
+    });
+
+    // Sort: folders first, then files
+    files.sort((a, b) => {
+        if (a.is_dir && !b.is_dir) return -1;
+        if (!a.is_dir && b.is_dir) return 1;
+        return a.file_name.localeCompare(b.file_name);
+    });
+
+    files.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'file-card' + (f.is_dir ? ' dir' : '');
+        
+        if (f.is_dir) {
+            card.innerHTML = `
+                <div class="file-info">
+                    <div class="file-name">
+                        <span class="file-icon">📁</span>
+                        ${escapeHtml(f.file_name)}
+                    </div>
+                    <div class="file-meta">文件夹</div>
+                </div>
+            `;
+            card.onclick = () => openFolder(f.fid, f.file_name);
+        } else {
+            card.innerHTML = `
+                <div class="file-info">
+                    <div class="file-name">
+                        <span class="file-icon">📄</span>
+                        ${escapeHtml(f.file_name)}
+                    </div>
+                    <div class="file-meta">${f.format_size}</div>
+                </div>
+                <div class="file-action">
+                    <button class="btn-download" onclick="event.stopPropagation(); buyFile('${escapeHtml(f.fid)}', '${escapeHtml(f.file_name)}', ${f.file_size})">
+                        ¥${f.price.toFixed(2)} 下载
+                    </button>
+                </div>
+            `;
+        }
+        container.appendChild(card);
+    });
+}
+
+function openFolder(fid, name) {
+    currentPath.push({fid, name});
+    loadFolder(fid);
+}
+
+function goToRoot() {
+    currentPath = [];
+    renderFiles(allFiles, parsedData.pwd_id, parsedData.stoken);
+}
+
+function goToLevel(level) {
+    currentPath = currentPath.slice(0, level + 1);
+    const folder = currentPath[currentPath.length - 1];
+    loadFolder(folder.fid);
+}
+
+async function buyFile(fid, fileName, fileSize) {
+    if (!confirm(`确认下载: ${fileName}\n文件大小: ${formatSize(fileSize)}\n价格: ¥${getPrice(fileSize).toFixed(2)}`)) {
+        return;
+    }
+
+    showStep('step-paying');
+
+    try {
+        const resp = await fetch('/quark/order', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                pwd_id: parsedData.pwd_id,
+                stoken: parsedData.stoken,
+                fid: fid,
+                file_name: fileName,
+                file_size: fileSize,
+                share_url: document.getElementById('link-input').value.trim()
+            })
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || data.error) {
+            throw new Error(data.error || '创建订单失败');
+        }
+
+        // 跳转支付
+        window.location.href = data.pay_url;
+    } catch (e) {
+        document.getElementById('error-text').textContent = e.message;
+        showStep('step-error');
+    }
+}
+
+function getPrice(size) {
+    const mb = size / (1024 * 1024);
+    if (mb < 100) return 2.0;
+    if (mb < 1024) return 5.0;
+    return 10.0;
+}
+
+function formatSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let i = 0, size = bytes;
+    while (size >= 1024 && i < units.length - 1) { size /= 1024; i++; }
+    return size.toFixed(1) + ' ' + units[i];
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// Enter key to parse
+document.getElementById('link-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') parseLink();
+});
+</script>
+{% endblock %}

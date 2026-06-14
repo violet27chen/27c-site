@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - {{ t('free_download') }} | 27c.site{% endblock %}
+{% block meta_desc %}{{ product.name }}, {{ t('free_download') }}, {{ t('cloud_full_' + (product.cloud_type or 'other')) }}. {{ product.description[:80] if product.description else '' }}{% endblock %}
+{% block og_title %}{{ product.name }} - 27c.site{% endblock %}
+{% block og_desc %}{{ product.name }}, {{ t('free_download') }}, {{ t('cloud_full_' + (product.cloud_type or 'other')) }}.{% endblock %}
+
+{% block content %}
+<div class="product-page">
+    <div class="product-back">
+        <a href="{{ url_for('index') }}">{{ t('back_to_list') }}</a>
+    </div>
+
+    <div class="product-detail">
+        <div class="product-image">
+            {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            {% else %}
+                <div class="product-img-placeholder">
+                    <span>{{ product.name[:2] }}</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="product-info">
+            <h1 class="product-title">{{ product.name }}</h1>
+
+            {% if product.category %}
+                <span class="product-category">{{ product.category }}</span>
+                {% if product.cloud_type %}
+                    <span class="cloud-badge cloud-{{ product.cloud_type }}">{{ t('cloud_' + product.cloud_type) }}</span>
+                {% endif %}
+            {% endif %}
+
+            <div class="product-price-box">
+                <span class="product-price product-price-free">{{ t('free_download') }}</span>
+            </div>
+
+            {% if product.description %}
+                <div class="product-desc">
+                    <h3>{{ t('resource_detail') }}</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+            {% endif %}
+
+            <div class="product-actions">
+                {% if product.quark_link %}
+                    <a href="{{ product.quark_link }}" target="_blank" rel="noopener" class="btn btn-primary btn-buy">
+                        {{ t('free_download') }}
+                    </a>
+                {% else %}
+                    <button class="btn btn-secondary" disabled>{{ t('no_link') }}</button>
+                {% endif %}
+            </div>
+
+            <div class="product-meta">
+                <p>{{ t('download_tip', cloud=t('cloud_full_' + (product.cloud_type or 'other'))) }}</p>
+            </div>
+
+            {% if product.contact_tg %}
+            <div class="proxy-service">
+                <div class="proxy-header">{{ t('proxy_title') }}</div>
+                <p class="proxy-desc">{{ t('proxy_desc') }}</p>
+                <div class="proxy-contact">
+                    <a href="https://t.me/{{ product.contact_tg }}" target="_blank" rel="noopener" class="proxy-tg-link">@{{ product.contact_tg }}</a>
+                </div>
+                <p class="proxy-note">{{ t('proxy_note') }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <h2 class="reviews-title">{{ t('reviews_title', count=reviews|length) }}</h2>
+
+        {% if current_user %}
+            <div class="review-form">
+                <h3>{{ t('write_review') }}</h3>
+                <form method="POST" action="{{ url_for('add_review', product_id=product.id) }}">
+                    <div class="rating-input">
+                        <label>{{ t('rating_5')[:2] }}：</label>
+                        <select name="rating" required>
+                            <option value="5">⭐⭐⭐⭐⭐ {{ t('rating_5') }}</option>
+                            <option value="4">⭐⭐⭐⭐ {{ t('rating_4') }}</option>
+                            <option value="3">⭐⭐⭐ {{ t('rating_3') }}</option>
+                            <option value="2">⭐⭐ {{ t('rating_2') }}</option>
+                            <option value="1">⭐ {{ t('rating_1') }}</option>
+                        </select>
+                    </div>
+                    <textarea name="content" class="review-textarea" placeholder="{{ t('review_placeholder') }}" required></textarea>
+                    <button type="submit" class="btn btn-primary">{{ t('submit_review') }}</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="review-login-tip">
+                <a href="{{ url_for('login') }}">{{ t('review_login') }}</a>
+            </div>
+        {% endif %}
+
+        <div class="reviews-list">
+            {% for review in reviews %}
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-user">{{ review.username }}</span>
+                        <span class="review-rating">{{ '⭐' * review.rating }}</span>
+                        <span class="review-date">{{ review.created_at.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    <p class="review-content">{{ review.content }}</p>
+                </div>
+            {% else %}
+                <p class="no-reviews">{{ t('no_reviews') }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

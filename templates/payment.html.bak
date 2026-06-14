@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}支付中... - 27c.site{% endblock %}
+
+{% block content %}
+<div class="payment-page">
+    <div class="payment-card">
+        <div class="payment-icon">💳</div>
+        <h1>正在跳转到支付宝...</h1>
+        <p>请在弹出的页面完成支付</p>
+        <div class="payment-spinner"></div>
+        <p class="payment-hint">如果页面没有自动跳转，请点击下方按钮</p>
+
+        <form id="payForm" method="POST" action="{{ submit_url }}">
+            {% for key, value in params.items() %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">手动跳转到支付</button>
+        </form>
+
+        <p class="payment-note">支付完成后将自动返回订单页面</p>
+    </div>
+</div>
+
+<script>
+    // Auto-submit payment form
+    setTimeout(function() {
+        document.getElementById('payForm').submit();
+    }, 1000);
+</script>
+{% endblock %}

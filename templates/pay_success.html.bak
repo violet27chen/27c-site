@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}购买成功 - 27c.site{% endblock %}
+
+{% block content %}
+<div class="pay-success-page">
+    <div class="success-modal">
+        <div class="success-icon">&#10003;</div>
+        <h2>购买成功</h2>
+        <p class="success-product">{{ order.product_name }}</p>
+        <div class="success-download">
+            <h3>下载链接</h3>
+            <a href="{{ order.quark_link }}" target="_blank" rel="noopener" class="download-link-box">
+                <span class="link-icon">&#8599;</span>
+                <span class="link-text">{{ order.quark_link }}</span>
+            </a>
+            <p class="download-hint">点击链接跳转到网盘下载</p>
+        </div>
+        <div class="success-actions">
+            <a href="{{ url_for('product_detail', product_id=order.product_id) }}" class="btn btn-secondary">返回商品</a>
+            <a href="{{ url_for('orders') }}" class="btn btn-primary">查看全部订单</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.pay-success-page{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
+.success-modal{background:#fff;border-radius:16px;padding:3rem 2rem;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.08);width:100%;max-width:480px}
+.success-icon{width:64px;height:64px;border-radius:50%;background:#10b981;color:#fff;font-size:32px;line-height:64px;margin:0 auto 1.5rem}
+.success-modal h2{font-size:1.5rem;color:#1a1a1a;margin:0 0 .5rem}
+.success-product{color:#666;font-size:.95rem;margin:0 0 2rem}
+.success-download{background:#f8f9fa;border-radius:12px;padding:1.5rem;margin-bottom:2rem;text-align:left}
+.success-download h3{font-size:.85rem;color:#999;text-transform:uppercase;letter-spacing:.5px;margin:0 0 .75rem}
+.download-link-box{display:flex;align-items:center;gap:.75rem;padding:.875rem 1rem;background:#fff;border:1px solid #e5e7eb;border-radius:10px;text-decoration:none;color:#2563eb;font-size:.9rem;word-break:break-all;transition:border-color .2s}
+.download-link-box:hover{border-color:#2563eb}
+.link-icon{font-size:1.1rem;flex-shrink:0}
+.download-hint{font-size:.8rem;color:#999;margin:.75rem 0 0}
+.success-actions{display:flex;gap:.75rem;justify-content:center}
+.btn{display:inline-block;padding:.75rem 1.5rem;border-radius:10px;font-size:.95rem;text-decoration:none;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:#1a1a1a;color:#fff}
+.btn-primary:hover{background:#333}
+.btn-secondary{background:#f3f4f6;color:#374151}
+.btn-secondary:hover{background:#e5e7eb}
+</style>
+{% endblock %}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="{{ 'en' if lang == 'en' else 'zh-CN' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'en' %}Privacy Policy{% else %}隐私政策{% endif %} - 27c.site</title>
+    <link rel="stylesheet" href="/fonts/inter.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',-apple-system,sans-serif;background:#FAFAFA;color:#212121}
+        nav{background:#FFF;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
+        .logo{font-size:20px;font-weight:600;color:#424242;text-decoration:none}
+        .lang-link{font-size:14px;color:#9E9E9E;text-decoration:none}
+        .lang-link:hover{color:#424242}
+        .content{max-width:800px;margin:0 auto;padding:60px 24px}
+        h1{font-size:32px;font-weight:700;color:#212121;margin-bottom:32px}
+        h2{font-size:20px;font-weight:600;color:#424242;margin:32px 0 16px}
+        p{font-size:15px;color:#757575;line-height:1.8;margin-bottom:16px}
+        .back{display:inline-block;color:#9E9E9E;text-decoration:none;font-size:14px;margin-bottom:32px}
+        .back:hover{color:#424242}
+        footer{text-align:center;padding:40px 24px;border-top:1px solid #F0F0F0;margin-top:60px}
+        footer p{font-size:12px;color:#BDBDBD}
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">27c.site</a>
+        <a href="{{ url_for('set_lang', lang='en' if lang == 'zh' else 'zh') }}" class="lang-link">{{ '中文' if lang == 'en' else 'EN' }}</a>
+    </nav>
+    <div class="content">
+        <a href="/" class="back">&larr; {{ 'Back to Home' if lang == 'en' else '返回首页' }}</a>
+
+        {% if lang == 'en' %}
+        <h1>Privacy Policy</h1>
+        <p style="margin-bottom:24px"><strong>Cloud Resource Sharing</strong> · Free Downloads</p>
+        <p>Last updated: June 5, 2026</p>
+
+        <h2>Information Collection</h2>
+        <p>27c.site only collects necessary account information (username, email, password) during user registration. Passwords are encrypted and stored — we cannot view your original password. Browsing and downloading resources does not require registration.</p>
+
+        <h2>Cookie Usage</h2>
+        <p>This site uses cookies to maintain login status and collect analytics. You can manage or disable cookies through your browser settings.</p>
+
+        <h2>Third-Party Services</h2>
+        <p>This site provides resource downloads through third-party cloud services (Quark, Baidu, Alibaba Cloud Drive, Google Drive, Dropbox, Mega, etc.). After clicking a download link, you will be redirected to the corresponding cloud platform, which has its own privacy policy.</p>
+
+        <h2>Log Records</h2>
+        <p>The server may record standard access logs, including IP addresses, access times, and requested pages. These logs are used solely for service maintenance and troubleshooting, and will not be used for other purposes.</p>
+
+        <h2>Advertising</h2>
+        <p>This site may display third-party advertisements. Advertisers may use cookies to serve relevant ads. You can disable cookies through your browser settings.</p>
+
+        <h2>Disclaimer</h2>
+        <p>27c.site serves solely as a cloud resource aggregation and sharing platform, responsible for collecting and organizing user-uploaded cloud resource links. The platform does not perform security audits or quality assurance on resource content. Users are responsible for verifying the authenticity, safety, and legality of resources. All risks arising from the use of downloaded resources are borne by the user.</p>
+
+        <h2>Policy Updates</h2>
+        <p>We may update this privacy policy from time to time. Updated policies will be published on this page with an updated "Last updated" date.</p>
+
+        <h2>Contact Us</h2>
+        <p>For questions about this privacy policy, please email <a href="mailto:violet_chf27@163.com" style="color:#9E9E9E">violet_chf27@163.com</a>.</p>
+
+        {% else %}
+
+        <h1>隐私政策</h1>
+        <p style="margin-bottom:24px"><strong>网盘资源分享</strong> · 免费下载</p>
+        <p>最后更新：2026年6月5日</p>
+
+        <h2>信息收集</h2>
+        <p>27c.site 仅在用户注册时收集必要的账户信息（用户名、邮箱、密码）。密码经过加密存储，我们无法查看您的原始密码。浏览和下载资源无需注册。</p>
+
+        <h2>Cookie 使用</h2>
+        <p>本站使用 Cookie 维持登录状态和统计访问数据。您可以通过浏览器设置管理或禁用 Cookie。</p>
+
+        <h2>第三方服务</h2>
+        <p>本站通过第三方网盘（夸克网盘、百度网盘、阿里云盘、Google Drive、Dropbox、Mega等）提供资源下载。点击下载链接后，您将跳转至对应网盘平台，该平台有其独立的隐私政策。</p>
+
+        <h2>日志记录</h2>
+        <p>服务器可能记录标准的访问日志，包括 IP 地址、访问时间、请求的页面等信息。这些日志仅用于维护服务和排查问题，不会用于其他目的。</p>
+
+        <h2>广告</h2>
+        <p>本网站可能展示第三方广告。广告商可能会使用 Cookie 来展示相关广告。您可以通过浏览器设置禁用 Cookie。</p>
+
+        <h2>免责声明</h2>
+        <p>27c.site 仅作为网盘资源聚合分享平台，负责收集和整理用户上传的网盘资源链接。平台不对资源内容进行安全审核或质量保证，资源的真实性、安全性、合法性需用户自行鉴别和判断。使用下载的资源所产生的一切风险由用户自行承担。</p>
+
+        <h2>政策更新</h2>
+        <p>我们可能会不时更新本隐私政策。更新后的政策将在本页面发布，并更新"最后更新"日期。</p>
+
+        <h2>联系我们</h2>
+        <p>如有关于隐私政策的疑问，请发送邮件至 <a href="mailto:violet_chf27@163.com" style="color:#9E9E9E">violet_chf27@163.com</a> 与我们取得联系。</p>
+
+        {% endif %}
+    </div>
+    <footer><p>&copy; 2026 27c.site</p></footer>
+</body>
+</html>

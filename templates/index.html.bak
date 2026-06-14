@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}27c.site - 2元软件商店 | Adobe全家桶 · 视频剪辑 · AI工具 · 学习资料{% endblock %}
+{% block meta_desc %}全场2元，网盘自动发货。精选Adobe全家桶、视频剪辑软件、AI工具、ComfyUI工作流、Python教程等资源，即买即得。{% endblock %}
+{% block og_title %}27c.site - 2元软件商店 | 全场2元 网盘自动发货{% endblock %}
+{% block og_desc %}精选软件、教程、工具资源，全场2元，网盘自动发货。{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-banner"><span>2元店</span><span class="sep">|</span><span>网盘自动发货</span></div>
+    <h1>2元软件商店</h1>
+    <p>精选软件 · 全场2元 · 多网盘自动发货</p>
+</div>
+
+<div class="search-wrap">
+    <form method="GET" action="{{ url_for('index') }}">
+        <input type="text" name="q" class="search" placeholder="搜索软件..." value="{{ current_search }}">
+    </form>
+</div>
+
+<div class="cats">
+    <button class="cat {% if not current_category or current_category == 'all' %}on{% endif %}"
+            onclick="window.location='{{ url_for('index', q=current_search) }}'">全部</button>
+    {% for cat in categories %}
+        <button class="cat {% if current_category == cat %}on{% endif %}"
+                onclick="window.location='{{ url_for('index', q=current_search, cat=cat) }}'">{{ cat }}</button>
+    {% endfor %}
+</div>
+
+<div class="grid">
+    {% for product in products %}
+        <div class="card">
+            {% if product.thumb_url or product.image_url %}
+                <div class="card-img-wrap"><img class="card-img" src="{{ product.thumb_url or product.image_url }}" alt="{{ product.name }}" loading="lazy"></div>
+            {% else %}
+                <div class="card-img-wrap"><div class="card-img-placeholder">
+                    <span>{{ product.name[:2] }}</span>
+                </div></div>
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ product.name }}</h3>
+                {% if product.cloud_type %}
+                    <span class="cloud-badge cloud-{{ product.cloud_type }}">{{ {"quark":"夸克","baidu":"百度","aliyun":"阿里云","123pan":"123云","xunlei":"迅雷","lanzou":"蓝奏","guangya":"光鸭","115pan":"115","other":"其他"}.get(product.cloud_type, "网盘") }}</span>
+                {% endif %}
+                {% if product.description %}
+                    <p class="card-desc">{{ product.description }}</p>
+                {% endif %}
+                <div class="card-footer">
+                    {% if is_new_user %}
+                        <div class="price-wrap">
+                            <span class="price-original">¥{{ "%.2f"|format(product.price) }}</span>
+                            <span class="price price-discount">¥{{ "%.2f"|format(product.price / 2) }}</span>
+                            <span class="new-badge-sm">半价</span>
+                        </div>
+                    {% else %}
+                        <span class="price">¥{{ "%.2f"|format(product.price) }}</span>
+                    {% endif %}
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary btn-sm">查看详情</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="no-results">
+            <p>暂无商品</p>
+            {% if current_search %}
+                <p>尝试其他搜索关键词</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

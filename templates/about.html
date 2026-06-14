@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="{{ 'en' if lang == 'en' else 'zh-CN' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if lang == 'en' %}About Us{% else %}关于我们{% endif %} - 27c.site</title>
+    <link rel="stylesheet" href="/fonts/inter.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',-apple-system,sans-serif;background:#FAFAFA;color:#212121}
+        nav{background:#FFF;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
+        .logo{font-size:20px;font-weight:600;color:#424242;text-decoration:none}
+        .lang-link{font-size:14px;color:#9E9E9E;text-decoration:none}
+        .lang-link:hover{color:#424242}
+        .content{max-width:800px;margin:0 auto;padding:60px 24px}
+        h1{font-size:32px;font-weight:700;color:#212121;margin-bottom:32px}
+        h2{font-size:20px;font-weight:600;color:#424242;margin:32px 0 16px}
+        p{font-size:15px;color:#757575;line-height:1.8;margin-bottom:16px}
+        .back{display:inline-block;color:#9E9E9E;text-decoration:none;font-size:14px;margin-bottom:32px}
+        .back:hover{color:#424242}
+        .feature{display:flex;gap:16px;margin-bottom:24px;padding:24px;background:#FFF;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        .feature-icon{width:48px;height:48px;background:#F5F5F5;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+        .feature-text h3{font-size:16px;font-weight:600;color:#212121;margin-bottom:8px}
+        .feature-text p{font-size:14px;color:#9E9E9E;margin:0}
+        footer{text-align:center;padding:40px 24px;border-top:1px solid #F0F0F0;margin-top:60px}
+        footer p{font-size:12px;color:#BDBDBD}
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">27c.site</a>
+        <a href="{{ url_for('set_lang', lang='en' if lang == 'zh' else 'zh') }}" class="lang-link">{{ '中文' if lang == 'en' else 'EN' }}</a>
+    </nav>
+    <div class="content">
+        <a href="/" class="back">&larr; {{ 'Back to Home' if lang == 'en' else '返回首页' }}</a>
+
+        {% if lang == 'en' %}
+        <h1>About Us</h1>
+        <p style="margin-bottom:24px"><strong>Cloud Resource Sharing</strong> · Free Downloads</p>
+        <p>27c.site is a cloud resource sharing platform featuring curated software and tools. All resources are available for free download via multiple cloud services including Quark, Baidu, Alibaba Cloud Drive, Google Drive, Dropbox, Mega, and more.</p>
+
+        <h2>Our Advantages</h2>
+        <div class="feature">
+            <div class="feature-icon">F</div>
+            <div class="feature-text">
+                <h3>Completely Free</h3>
+                <p>All resources are free to download. No paywalls, no registration required to browse.</p>
+            </div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">☁</div>
+            <div class="feature-text">
+                <h3>Multi-Cloud Support</h3>
+                <p>Download via Quark, Baidu, Alibaba Cloud Drive, Google Drive, Dropbox, Mega, and more.</p>
+            </div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">S</div>
+            <div class="feature-text">
+                <h3>Curated Resources</h3>
+                <p>We carefully select practical tools and resources to ensure every download is worth your time.</p>
+            </div>
+        </div>
+
+        <h2>Disclaimer</h2>
+        <p>27c.site serves solely as a cloud resource aggregation and sharing platform, responsible for collecting and organizing user-uploaded cloud resource links. The platform does not perform security audits or quality assurance on resource content. Users are responsible for verifying the authenticity, safety, and legality of resources. All risks arising from the use of downloaded resources are borne by the user.</p>
+
+        <h2>Blog</h2>
+        <p>For more tech sharing and resource recommendations, visit our blog:</p>
+        <p><a href="https://www.qiyuan.icu" target="_blank" style="color:#9E9E9E">www.qiyuan.icu</a> — Documenting learning and daily inspiration, sharing productivity tools, tech tutorials, and practical resources.</p>
+
+        <h2>Contact Us</h2>
+        <p>For any suggestions or collaboration inquiries, feel free to reach out:</p>
+        <p>Email: <a href="mailto:violet_chf27@163.com" style="color:#9E9E9E">violet_chf27@163.com</a></p>
+
+        {% else %}
+
+        <h1>关于我们</h1>
+        <p style="margin-bottom:24px"><strong>网盘资源分享</strong> · 免费下载</p>
+        <p>27c.site 是一个网盘资源分享站，精选实用软件和工具，所有资源均可免费下载，通过夸克、百度、阿里云、Google Drive、Dropbox、Mega等多网盘提供链接。</p>
+
+        <h2>我们的优势</h2>
+        <div class="feature">
+            <div class="feature-icon">F</div>
+            <div class="feature-text">
+                <h3>完全免费</h3>
+                <p>所有资源均可免费下载，无付费墙，无需注册即可浏览。</p>
+            </div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">☁</div>
+            <div class="feature-text">
+                <h3>多网盘资源</h3>
+                <p>提供夸克网盘、百度网盘、阿里云盘、Google Drive、Dropbox、Mega等多种下载方式。</p>
+            </div>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">S</div>
+            <div class="feature-text">
+                <h3>精选资源</h3>
+                <p>我们精心挑选实用工具和资源，确保每个资源都值得下载。</p>
+            </div>
+        </div>
+
+        <h2>免责声明</h2>
+        <p>27c.site 仅作为网盘资源聚合分享平台，负责收集和整理用户上传的网盘资源链接。平台不对资源内容进行安全审核或质量保证，资源的真实性、安全性、合法性需用户自行鉴别和判断。使用下载的资源所产生的一切风险由用户自行承担。</p>
+
+        <h2>博客</h2>
+        <p>更多技术分享和资源推荐，请访问我们的博客：</p>
+        <p><a href="https://www.qiyuan.icu" target="_blank" style="color:#9E9E9E">www.qiyuan.icu</a> — 记录学习与日常灵感，分享效率工具、技术教程和实用资源。</p>
+
+        <h2>联系我们</h2>
+        <p>如有任何建议或合作意向，欢迎通过以下方式联系我们：</p>
+        <p>Email: <a href="mailto:violet_chf27@163.com" style="color:#9E9E9E">violet_chf27@163.com</a></p>
+
+        {% endif %}
+    </div>
+    <footer><p>&copy; 2026 27c.site</p></footer>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('register_title') }} - 27c.site{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>{{ t('register_title') }}</h1>
+        <p class="auth-sub">{{ t('register_sub') }}</p>
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="username">{{ t('label_username') }}</label>
+                <input type="text" id="username" name="username" required
+                       placeholder="{{ t('placeholder_username_len') }}" value="{{ username|default('') }}"
+                       minlength="3" maxlength="50" autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="email">{{ t('label_email') }}</label>
+                <input type="email" id="email" name="email" required
+                       placeholder="{{ t('placeholder_email') }}" value="{{ email|default('') }}"
+                       autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">{{ t('label_password') }}</label>
+                <input type="password" id="password" name="password" required
+                       placeholder="{{ t('placeholder_min6') }}" minlength="6" autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">{{ t('label_confirm_pw') }}</label>
+                <input type="password" id="confirm_password" name="confirm_password" required
+                       placeholder="{{ t('placeholder_confirm_pw') }}" autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">{{ t('btn_register') }}</button>
+        </form>
+
+        <p class="auth-switch">
+            {{ t('has_account') }} <a href="{{ url_for('login') }}">{{ t('login_now') }}</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

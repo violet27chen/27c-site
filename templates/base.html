@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="{{ 'en' if lang == 'en' else 'zh-CN' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}27c.site - {{ t('hero_title') }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_desc %}27c.site {{ t('hero_desc') }}{% endblock %}">
+    <meta name="keywords" content="resource sharing,cloud drive,software,free download,Adobe,tools,AI,Python,ComfyUI">
+    <meta property="og:title" content="{% block og_title %}27c.site - {{ t('hero_title') }}{% endblock %}">
+    <meta property="og:description" content="{% block og_desc %}{{ t('hero_desc') }}{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://27c.site">
+    <link rel="canonical" href="https://27c.site">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=12) }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="{{ url_for('index') }}" class="logo">27c.site</a>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">{{ t('nav_home') }}</a>
+                {% if current_user %}
+                    <a href="{{ url_for('dashboard') }}">{{ t('nav_admin') }}</a>
+                    <span class="nav-user">{{ current_user.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="nav-btn-sm">{{ t('nav_logout') }}</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-btn-sm">{{ t('nav_login') }}</a>
+                    <a href="{{ url_for('register') }}" class="nav-btn">{{ t('nav_register') }}</a>
+                {% endif %}
+                <a href="{{ url_for('set_lang', lang='en' if lang == 'zh' else 'zh') }}" class="lang-toggle" title="Switch language">{{ t('lang_switch') }}</a>
+            </div>
+            <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+        </div>
+    </nav>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if error_code %}
+            <div class="error-page">
+                <h1>{{ error_code }}</h1>
+                <p>{{ error_msg }}</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">{{ t('nav_home') }}</a>
+            </div>
+        {% else %}
+            {% block content %}{% endblock %}
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>{{ t('footer_text') }}</p>
+        <p class="footer-links">
+            <a href="{{ url_for('index') }}">{{ t('footer_home') }}</a> ·
+            <a href="/about.html">{{ t('footer_about') }}</a> ·
+            <a href="/privacy.html">{{ t('footer_privacy') }}</a> ·
+            <a href="https://www.qiyuan.icu" target="_blank">{{ t('footer_blog') }}</a>
+        </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

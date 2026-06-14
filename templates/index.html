@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}27c.site - {{ t('hero_title') }}{% endblock %}
+{% block meta_desc %}{{ t('hero_desc') }}{% endblock %}
+{% block og_title %}27c.site - {{ t('hero_title') }}{% endblock %}
+{% block og_desc %}{{ t('hero_desc') }}{% endblock %}
+
+{% block content %}
+<div style="max-width:960px;margin:0 auto;padding:12px 16px 0">
+    <a href="https://www.qiyuan.icu" target="_blank" style="display:block;background:#171717;border-radius:12px;padding:16px 24px;text-decoration:none;transition:transform .2s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <div style="flex:1;min-width:160px">
+                <p style="color:#BDBDBD;font-size:11px;margin:0 0 4px;letter-spacing:1px">BLOG</p>
+                <h2 style="color:#fff;font-size:16px;font-weight:600;margin:0 0 4px;line-height:1.4">{{ t('blog_title') }}</h2>
+                <p style="color:#9E9E9E;font-size:13px;line-height:1.5;margin:0">{{ t('blog_desc') }}</p>
+            </div>
+            <div style="flex-shrink:0">
+                <span style="display:inline-block;background:#fff;color:#171717;font-size:13px;font-weight:600;padding:8px 20px;border-radius:6px">{{ t('blog_btn') }}</span>
+            </div>
+        </div>
+    </a>
+</div>
+
+<div class="hero">
+    <div class="hero-banner"><span>{{ t('hero_banner1') }}</span><span class="sep">|</span><span>{{ t('hero_banner2') }}</span></div>
+    <h1>{{ t('hero_title') }}</h1>
+    <p>{{ t('hero_desc') }}</p>
+</div>
+
+<div class="search-wrap">
+    <form method="GET" action="{{ url_for('index') }}">
+        <input type="text" name="q" class="search" placeholder="{{ t('search_placeholder') }}" value="{{ current_search }}">
+    </form>
+</div>
+
+<div class="cats">
+    <button class="cat {% if not current_category or current_category == 'all' %}on{% endif %}"
+            onclick="window.location='{{ url_for('index', q=current_search) }}'">{{ t('cat_all') }}</button>
+    {% for cat in categories %}
+        <button class="cat {% if current_category == cat %}on{% endif %}"
+                onclick="window.location='{{ url_for('index', q=current_search, cat=cat) }}'">{{ cat }}</button>
+    {% endfor %}
+</div>
+
+<div class="grid">
+    {% for product in products %}
+        <div class="card">
+            {% if product.thumb_url or product.image_url %}
+                <div class="card-img-wrap"><img class="card-img" src="{{ product.thumb_url or product.image_url }}" alt="{{ product.name }}" loading="lazy"></div>
+            {% else %}
+                <div class="card-img-wrap"><div class="card-img-placeholder">
+                    <span>{{ product.name[:2] }}</span>
+                </div></div>
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ product.name }}</h3>
+                {% if product.cloud_type %}
+                    <span class="cloud-badge cloud-{{ product.cloud_type }}">{{ t('cloud_' + product.cloud_type) }}</span>
+                {% endif %}
+                {% if product.description %}
+                    <p class="card-desc">{{ product.description }}</p>
+                {% endif %}
+                <div class="card-footer">
+                    <span class="price price-free">{{ t('price_free') }}</span>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary btn-sm">{{ t('view_detail') }}</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="no-results">
+            <p>{{ t('no_products') }}</p>
+            {% if current_search %}
+                <p>{{ t('try_other_search') }}</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

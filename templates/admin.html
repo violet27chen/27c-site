@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin_title') }} - 27c.site{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+  <div class="admin-top">
+    <h1>{{ t('admin_title') }}</h1>
+    <button class="btn btn-primary btn-sm" onclick="openModal()">{{ t('admin_add') }}</button>
+  </div>
+
+  <div class="admin-stats">
+    <div class="stat-card">
+      <div class="stat-num">{{ stats.my_products }}</div>
+      <div class="stat-label">{{ t('admin_my_resources') }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ stats.my_active }}</div>
+      <div class="stat-label">{{ t('admin_active') }}</div>
+    </div>
+  </div>
+
+  {% if products and products|length > 0 %}
+  <div class="admin-list">
+    {% for p in products %}
+    <div class="admin-item">
+      <div class="admin-item-img">
+        {% if p.thumb_url or p.image_url %}
+          <img src="{{ p.thumb_url or p.image_url }}" alt="" loading="lazy">
+        {% else %}
+          <div class="admin-item-noimg">{{ p.name[:2] }}</div>
+        {% endif %}
+      </div>
+      <div class="admin-item-info">
+        <div class="admin-item-name">{{ p.name }}</div>
+        <div class="admin-item-meta">
+          <span>{{ p.category or '—' }}</span>
+          {% if p.cloud_type %}
+            <span class="cloud-badge cloud-{{ p.cloud_type }}">{{ t('cloud_' + p.cloud_type) }}</span>
+          {% endif %}
+          {% if p.contact_tg %}
+            <span style="color:#3b82f6">@{{ p.contact_tg }}</span>
+          {% endif %}
+          {% if p.is_active %}
+            <span class="admin-badge-on">{{ t('admin_status_on') }}</span>
+          {% else %}
+            <span class="admin-badge-off">{{ t('admin_status_off') }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="admin-item-actions">
+        <button class="btn btn-outline btn-sm" onclick='editProduct({{ p|tojson }})'>{{ t('admin_edit') }}</button>
+        <form method="POST" action="{{ url_for('toggle_product', product_id=p.id) }}" style="display:inline">
+          {% if p.is_active %}
+            <button type="submit" class="btn btn-outline btn-sm" style="color:#dc2626">{{ t('admin_status_off') }}</button>
+          {% else %}
+            <button type="submit" class="btn btn-outline btn-sm" style="color:#16a34a">{{ t('admin_status_on') }}</button>
+          {% endif %}
+        </form>
+        <form method="POST" action="{{ url_for('delete_product', product_id=p.id) }}" style="display:inline" onsubmit="return confirm('{{ t('admin_confirm_delete') }}')">
+          <button type="submit" class="btn btn-danger btn-sm">{{ t('admin_delete') }}</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="admin-empty">
+    <p>{{ t('admin_no_resources') }}</p>
+    <button class="btn btn-primary" onclick="openModal()">{{ t('admin_add_first') }}</button>
+  </div>
+  {% endif %}
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">{{ t('admin_modal_add') }}</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <form id="productForm" method="POST" action="{{ url_for('save_product') }}" enctype="multipart/form-data">
+      <div class="modal-body">
+        <input type="hidden" id="formId" name="id" value="">
+
+        <div class="form-group">
+          <label>{{ t('admin_label_name') }}</label>
+          <input type="text" class="form-control" id="formName" name="name" placeholder="{{ t('admin_placeholder_name') }}" required>
+        </div>
+
+        <div class="form-group">
+          <label>{{ t('admin_label_desc') }}</label>
+          <textarea class="form-control" id="formDesc" name="description" placeholder="{{ t('admin_placeholder_desc') }}"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>{{ t('admin_label_cat') }}</label>
+          <select class="form-control" id="formCategory" name="category" onchange="toggleNewCat()">
+            <option value="">{{ t('admin_select_cat') }}</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+            <option value="__new__">{{ t('admin_new_cat') }}</option>
+          </select>
+          <input type="text" class="form-control" id="formNewCategory" name="new_category" placeholder="{{ t('admin_placeholder_new_cat') }}" style="margin-top:8px;display:none;">
+        </div>
+
+        <div class="form-group">
+          <label>{{ t('admin_label_img') }}</label>
+          <div class="img-tabs">
+            <button type="button" class="img-tab active" onclick="switchTab('image','upload')">{{ t('admin_tab_upload') }}</button>
+            <button type="button" class="img-tab" onclick="switchTab('image','url')">{{ t('admin_tab_url') }}</button>
+          </div>
+          <div class="img-tab-content active" id="image-upload">
+            <label class="upload-area">
+              <input type="file" name="image_file" accept="image/*" onchange="handleUpload(this,'image')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>{{ t('admin_upload_hint1') }}</span>
+            </label>
+            <div class="upload-hint">{{ t('admin_upload_hint2') }}</div>
+          </div>
+          <div class="img-tab-content" id="image-url">
+            <input type="url" class="form-control" id="imageDirectUrl" placeholder="https://example.com/image.jpg" oninput="document.getElementById('imageUrl').value=this.value">
+          </div>
+          <div class="img-preview" id="imagePreview">
+            <img id="imagePreviewImg" src="">
+            <span class="delete-btn" onclick="clearPreview('image')">{{ t('admin_delete_img') }}</span>
+          </div>
+          <input type="hidden" id="imageUrl" name="image_url" value="">
+          <div class="upload-status" id="imageStatus"></div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ t('admin_label_thumb') }}</label>
+          <div class="img-tabs">
+            <button type="button" class="img-tab active" onclick="switchTab('thumb','upload')">{{ t('admin_tab_upload') }}</button>
+            <button type="button" class="img-tab" onclick="switchTab('thumb','url')">{{ t('admin_tab_url') }}</button>
+          </div>
+          <div class="img-tab-content active" id="thumb-upload">
+            <label class="upload-area">
+              <input type="file" name="thumb_file" accept="image/*" onchange="handleUpload(this,'thumb')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>{{ t('admin_upload_hint1') }}</span>
+            </label>
+            <div class="upload-hint">{{ t('admin_upload_hint2') }}</div>
+          </div>
+          <div class="img-tab-content" id="thumb-url">
+            <input type="url" class="form-control" id="thumbDirectUrl" placeholder="https://example.com/thumb.jpg" oninput="document.getElementById('thumbUrl').value=this.value">
+          </div>
+          <div class="img-preview" id="thumbPreview">
+            <img id="thumbPreviewImg" src="">
+            <span class="delete-btn" onclick="clearPreview('thumb')">{{ t('admin_delete_img') }}</span>
+          </div>
+          <input type="hidden" id="thumbUrl" name="thumb_url" value="">
+          <div class="upload-status" id="thumbStatus"></div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ t('admin_label_link') }}</label>
+          <input type="url" class="form-control" id="formLink" name="quark_link" placeholder="{{ t('admin_placeholder_link') }}" required>
+        </div>
+
+        <div class="form-group">
+          <label>{{ t('admin_label_tg') }}</label>
+          <input type="text" class="form-control" id="formTg" name="contact_tg" placeholder="{{ t('admin_placeholder_tg') }}">
+        </div>
+
+        <div class="form-group">
+          <label class="form-check">
+            <input type="checkbox" id="formActive" name="is_active" value="1" checked>
+            <span>{{ t('admin_label_active') }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">{{ t('admin_btn_cancel') }}</button>
+        <button type="submit" class="btn btn-primary">{{ t('admin_btn_save') }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.admin-page { padding: 32px 0 48px; }
+.admin-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.admin-top h1 { font-size: 22px; font-weight: 700; }
+.admin-stats { display: flex; gap: 16px; margin-bottom: 24px; }
+.stat-card { flex: 1; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+.stat-num { font-size: 28px; font-weight: 700; color: #171717; }
+.stat-label { font-size: 13px; color: #888; margin-top: 2px; }
+.admin-list { display: flex; flex-direction: column; gap: 1px; background: rgba(0,0,0,.06); border-radius: 12px; overflow: hidden; }
+.admin-item { display: flex; align-items: center; gap: 16px; padding: 16px; background: #fff; }
+.admin-item-img { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #f0f0f0; }
+.admin-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.admin-item-noimg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e8e8e8, #d4d4d4); color: #999; font-size: 16px; font-weight: 600; }
+.admin-item-info { flex: 1; min-width: 0; }
+.admin-item-name { font-size: 14px; font-weight: 600; color: #171717; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.admin-item-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 12px; color: #888; }
+.admin-item-meta .cloud-badge { margin: 0; }
+.admin-badge-on { display: inline-block; padding: 3px 10px; background: #f0fdf4; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 11px; letter-spacing: .3px; }
+.admin-badge-off { display: inline-block; padding: 3px 10px; background: #fef2f2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 11px; letter-spacing: .3px; }
+.admin-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.admin-empty { text-align: center; padding: 64px 0; color: #999; background: #fff; border-radius: 12px; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+.admin-empty p { margin-bottom: 16px; }
+.btn-danger { background: #dc2626; color: #fff !important; }
+.btn-danger:hover { background: #b91c1c; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.5); z-index: 1000; justify-content: center; align-items: center; }
+.modal-overlay.active { display: flex; }
+.modal { background: #fff; border-radius: 16px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+.modal-header h3 { font-size: 17px; font-weight: 600; }
+.modal-close { width: 32px; height: 32px; border: none; background: none; font-size: 20px; cursor: pointer; color: #999; border-radius: 8px; }
+.modal-close:hover { background: #f5f5f5; color: #333; }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 12px; }
+.form-group { margin-bottom: 16px; }
+.form-group > label:first-child { display: block; font-size: 13px; font-weight: 500; color: #666; margin-bottom: 6px; }
+.form-control { width: 100%; padding: 10px 14px; font-size: 14px; border: none; border-radius: 10px; background: #f5f5f5; outline: none; font-family: inherit; transition: box-shadow .2s; }
+.form-control:focus { box-shadow: 0 0 0 2px #171717; background: #fff; }
+textarea.form-control { resize: vertical; min-height: 80px; }
+select.form-control { appearance: auto; }
+.form-check { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.form-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: #171717; }
+.img-tabs { display: flex; gap: 0; margin-bottom: 8px; border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden; }
+.img-tab { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: #fafafa; color: #888; border: none; transition: all .2s; }
+.img-tab.active { background: #171717; color: #fff; }
+.img-tab-content { display: none; }
+.img-tab-content.active { display: block; }
+.upload-area { display: flex; flex-direction: column; align-items: center; gap: 8px; border: 2px dashed #e5e5e5; border-radius: 10px; padding: 24px; cursor: pointer; transition: all .2s; color: #999; }
+.upload-area:hover { border-color: #171717; background: #fafafa; }
+.upload-area input[type="file"] { position: absolute; width: 0; height: 0; opacity: 0; }
+.upload-area span { font-size: 13px; }
+.upload-hint { font-size: 12px; color: #aaa; margin-top: 6px; }
+.img-preview { margin-top: 10px; display: none; }
+.img-preview img { max-width: 200px; max-height: 120px; border-radius: 8px; object-fit: cover; }
+.delete-btn { display: inline-block; margin-top: 6px; font-size: 12px; color: #dc2626; cursor: pointer; }
+.upload-status { font-size: 12px; margin-top: 4px; color: #888; }
+.upload-status.error { color: #dc2626; }
+.upload-status.ok { color: #16a34a; }
+@media (max-width: 768px) {
+  .admin-stats { flex-direction: column; }
+  .admin-item { flex-wrap: wrap; }
+  .admin-item-actions { width: 100%; justify-content: flex-end; }
+}
+</style>
+
+<script>
+function editProduct(p) { openModal(p); }
+function openModal(product) {
+  var m = document.getElementById('modal');
+  document.getElementById('modalTitle').textContent = product ? '{{ t("admin_modal_edit") }}' : '{{ t("admin_modal_add") }}';
+  document.getElementById('formId').value = product ? (product.id || '') : '';
+  document.getElementById('formName').value = product ? (product.name || '') : '';
+  document.getElementById('formDesc').value = product ? (product.description || '') : '';
+  document.getElementById('formCategory').value = product ? (product.category || '') : '';
+  document.getElementById('formNewCategory').style.display = 'none';
+  document.getElementById('formActive').checked = product ? !!product.is_active : true;
+  document.getElementById('formLink').value = product ? (product.quark_link || '') : '';
+  document.getElementById('formTg').value = product ? (product.contact_tg || '') : '';
+  clearPreview('image');
+  clearPreview('thumb');
+  if (product) {
+    if (product.image_url) {
+      document.getElementById('imagePreviewImg').src = product.image_url;
+      document.getElementById('imagePreview').style.display = 'block';
+      document.getElementById('imageUrl').value = product.image_url;
+    }
+    if (product.thumb_url) {
+      document.getElementById('thumbPreviewImg').src = product.thumb_url;
+      document.getElementById('thumbPreview').style.display = 'block';
+      document.getElementById('thumbUrl').value = product.thumb_url;
+    }
+  }
+  switchTab('image', 'upload');
+  switchTab('thumb', 'upload');
+  m.classList.add('active');
+}
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+function toggleNewCat() {
+  var sel = document.getElementById('formCategory');
+  document.getElementById('formNewCategory').style.display = sel.value === '__new__' ? 'block' : 'none';
+}
+function switchTab(prefix, tab) {
+  var uploadDiv = document.getElementById(prefix + '-upload');
+  var urlDiv = document.getElementById(prefix + '-url');
+  var tabs = uploadDiv.parentElement.querySelectorAll('.img-tab');
+  tabs[0].classList.toggle('active', tab === 'upload');
+  tabs[1].classList.toggle('active', tab === 'url');
+  uploadDiv.classList.toggle('active', tab === 'upload');
+  urlDiv.classList.toggle('active', tab === 'url');
+}
+function handleUpload(input, prefix) {
+  var file = input.files[0];
+  if (!file) return;
+  var statusEl = document.getElementById(prefix + 'Status');
+  if (file.size > 5 * 1024 * 1024) {
+    statusEl.textContent = '{{ t("admin_img_too_large") }}';
+    statusEl.className = 'upload-status error';
+    return;
+  }
+  statusEl.textContent = '{{ t("admin_uploading") }}';
+  statusEl.className = 'upload-status';
+  var fd = new FormData();
+  fd.append('file', file);
+  fetch('{{ url_for("upload_image") }}', { method: 'POST', body: fd })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.url) {
+        document.getElementById(prefix + 'PreviewImg').src = d.url;
+        document.getElementById(prefix + 'Preview').style.display = 'block';
+        document.getElementById(prefix + 'Url').value = d.url;
+        statusEl.textContent = '';
+        statusEl.className = 'upload-status ok';
+      } else {
+        statusEl.textContent = d.error || '{{ t("admin_upload_fail") }}';
+        statusEl.className = 'upload-status error';
+      }
+    })
+    .catch(function() {
+      statusEl.textContent = '{{ t("admin_upload_fail") }}';
+      statusEl.className = 'upload-status error';
+    });
+}
+document.getElementById('productForm').addEventListener('submit', function() {
+  var sel = document.getElementById('formCategory');
+  if (sel.value === '__new__') {
+    var nc = document.getElementById('formNewCategory').value.trim();
+    if (nc) sel.value = nc;
+  }
+});
+function clearPreview(prefix) {
+  document.getElementById(prefix + 'Preview').style.display = 'none';
+  document.getElementById(prefix + 'PreviewImg').src = '';
+  document.getElementById(prefix + 'Url').value = '';
+  var s = document.getElementById(prefix + 'Status');
+  if (s) { s.textContent = ''; s.className = 'upload-status'; }
+}
+</script>
+{% endblock %}

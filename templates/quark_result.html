@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}下载结果 - 27c.site{% endblock %}
+
+{% block content %}
+<div class="quark-result">
+    {% if order.status == 'completed' %}
+    <div class="result-card success">
+        <div class="result-icon">✓</div>
+        <h2>下载准备就绪</h2>
+        <p class="file-name">{{ order.file_name }}</p>
+        <a href="{{ order.download_url }}" class="btn-download-main" download>
+            下载文件
+        </a>
+        <p class="expire-note">链接24小时内有效</p>
+    </div>
+
+    {% elif order.status == 'downloading' %}
+    <div class="result-card">
+        <div class="spinner"></div>
+        <h2>文件正在下载中</h2>
+        <p class="file-name">{{ order.file_name }}</p>
+        <p class="status-text">服务器正在从夸克下载文件，请稍候...</p>
+        <div id="status-info">
+            <p>订单号: {{ order.order_no }}</p>
+        </div>
+        <script>
+        // 自动刷新状态
+        function checkStatus() {
+            fetch('/quark/status/{{ order.order_no }}')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'completed' && data.download_url) {
+                        window.location.reload();
+                    } else if (data.status === 'failed') {
+                        document.querySelector('.result-card').innerHTML = `
+                            <div class="result-icon error">✗</div>
+                            <h2>下载失败</h2>
+                            <p class="error-text">${data.error_msg || '未知错误'}</p>
+                            <a href="/quark/" class="btn-back">返回重试</a>
+                        `;
+                    } else {
+                        setTimeout(checkStatus, 3000);
+                    }
+                })
+                .catch(() => setTimeout(checkStatus, 5000));
+        }
+        setTimeout(checkStatus, 2000);
+        </script>
+    </div>
+
+    {% elif order.status == 'failed' %}
+    <div class="result-card">
+        <div class="result-icon error">✗</div>
+        <h2>下载失败</h2>
+        <p class="file-name">{{ order.file_name }}</p>
+        <p class="error-text">{{ order.error_msg or '下载过程中出现错误' }}</p>
+        <a href="/quark/" class="btn-back">返回重试</a>
+    </div>
+
+    {% else %}
+    <div class="result-card">
+        <div class="result-icon">?</div>
+        <h2>订单状态: {{ order.status }}</h2>
+        <p class="file-name">{{ order.file_name }}</p>
+        <a href="/quark/" class="btn-back">返回</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.quark-result {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 3em 1em;
+}
+
+.result-card {
+    text-align: center;
+    padding: 2em;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 1px solid #eee;
+}
+
+.result-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #16a34a;
+    color: #fff;
+    font-size: 28px;
+    line-height: 56px;
+    margin: 0 auto 16px;
+}
+
+.result-icon.error {
+    background: #dc2626;
+}
+
+.result-card h2 {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 8px;
+}
+
+.file-name {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 20px;
+    word-break: break-all;
+}
+
+.btn-download-main {
+    display: inline-block;
+    padding: 12px 32px;
+    background: #1a1a1a;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-download-main:hover {
+    background: #333;
+}
+
+.expire-note {
+    color: #999;
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+.btn-back {
+    display: inline-block;
+    padding: 10px 24px;
+    background: #f5f5f5;
+    color: #666;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+    margin-top: 16px;
+}
+
+.btn-back:hover {
+    background: #eee;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #eee;
+    border-top-color: #333;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.status-text {
+    color: #888;
+    font-size: 14px;
+}
+
+.error-text {
+    color: #dc2626;
+    font-size: 14px;
+}
+</style>
+{% endblock %}

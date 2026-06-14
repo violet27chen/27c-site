@@ -1,0 +1,318 @@
+"""
+27c.site - Bilingual translations (zh/en)
+"""
+
+TRANSLATIONS = {
+    'zh': {
+        # Nav
+        'nav_home': '软件',
+        'nav_admin': '管理',
+        'nav_logout': '退出',
+        'nav_login': '登录',
+        'nav_register': '注册',
+        'lang_switch': 'EN',
+
+        # Hero / Index
+        'hero_banner1': '资源分享',
+        'hero_banner2': '多网盘资源',
+        'hero_title': '网盘资源分享站',
+        'hero_desc': '精选软件 · 免费分享 · 多网盘支持',
+        'search_placeholder': '搜索软件...',
+        'cat_all': '全部',
+        'price_free': '免费',
+        'view_detail': '查看详情',
+        'no_products': '暂无商品',
+        'try_other_search': '尝试其他搜索关键词',
+
+        # Blog banner
+        'blog_title': 'qi yuan · 个人博客',
+        'blog_desc': '技术教程 · 效率工具 · 软件推荐',
+        'blog_btn': '去看看 →',
+
+        # Product detail
+        'back_to_list': '← 返回列表',
+        'free_download': '免费获取',
+        'no_link': '暂无下载链接',
+        'resource_detail': '资源详情',
+        'download_tip': '点击上方按钮跳转到{cloud}下载',
+        'reviews_title': '用户评价 ({count})',
+        'write_review': '发表评价',
+        'review_login': '登录后可发表评价',
+        'review_placeholder': '分享您的使用体验...',
+        'submit_review': '提交评价',
+        'no_reviews': '暂无评价，成为第一个评价的人吧！',
+        'rating_5': '非常满意',
+        'rating_4': '满意',
+        'rating_3': '一般',
+        'rating_2': '不满意',
+        'rating_1': '非常不满意',
+
+        # Proxy download service
+        'proxy_title': '代下载服务',
+        'proxy_desc': '资源免费分享，可直接点击上方按钮跳转网盘下载。如需代下载服务（由站长帮您下载并发送文件），请付费后联系站长。',
+        'proxy_contact': '联系站长',
+        'proxy_tg': 'Telegram: @violet27Team',
+        'proxy_note': '付费后站长将通过 Telegram 发送下载好的文件',
+
+        # Login
+        'login_title': '登录',
+        'login_sub': '欢迎回到 27c.site',
+        'label_username': '用户名或邮箱',
+        'placeholder_username': '请输入用户名或邮箱',
+        'label_password': '密码',
+        'placeholder_password': '请输入密码',
+        'btn_login': '登录',
+        'no_account': '还没有账号？',
+        'register_now': '立即注册',
+
+        # Register
+        'register_title': '注册',
+        'register_sub': '创建 27c.site 账号',
+        'label_email': '邮箱',
+        'placeholder_email': 'your@email.com',
+        'placeholder_username_len': '3-50个字符',
+        'placeholder_min6': '至少6个字符',
+        'label_confirm_pw': '确认密码',
+        'placeholder_confirm_pw': '再次输入密码',
+        'btn_register': '注册',
+        'has_account': '已有账号？',
+        'login_now': '立即登录',
+
+        # Admin
+        'admin_title': '资源管理',
+        'admin_back': '← 返回首页',
+        'admin_my_resources': '我发布的资源',
+        'admin_active': '上架中',
+        'admin_my_list': '我的资源',
+        'admin_add': '+ 发布资源',
+        'admin_th_id': 'ID',
+        'admin_th_img': '图片',
+        'admin_th_name': '名称',
+        'admin_th_cat': '分类',
+        'admin_th_cloud': '网盘',
+        'admin_th_status': '状态',
+        'admin_th_actions': '操作',
+        'admin_status_on': '上架',
+        'admin_status_off': '下架',
+        'admin_edit': '编辑',
+        'admin_delete': '删除',
+        'admin_confirm_delete': '确定删除？',
+        'admin_no_resources': '你还没有发布任何资源',
+        'admin_add_first': '发布第一个资源',
+        'admin_modal_add': '发布资源',
+        'admin_modal_edit': '编辑资源',
+        'admin_label_name': '资源名称 *',
+        'admin_placeholder_name': '例如：Adobe全家桶',
+        'admin_label_desc': '描述',
+        'admin_placeholder_desc': '资源描述',
+        'admin_label_cat': '分类',
+        'admin_select_cat': '-- 选择分类 --',
+        'admin_new_cat': '+ 新建分类',
+        'admin_placeholder_new_cat': '输入新分类名称',
+        'admin_label_img': '商品图片',
+        'admin_label_thumb': '缩略图（可选，不填用商品图片）',
+        'admin_tab_upload': '上传',
+        'admin_tab_url': 'URL',
+        'admin_upload_hint1': '点击或拖拽图片到此处',
+        'admin_upload_hint2': 'JPG / PNG / WebP，最大 5MB',
+        'admin_delete_img': '删除',
+        'admin_label_link': '网盘链接 *',
+        'admin_placeholder_link': '夸克/百度/阿里云/Google Drive等网盘链接',
+        'admin_label_active': '上架',
+        'admin_btn_cancel': '取消',
+        'admin_btn_save': '保存',
+        'admin_uploading': '上传中...',
+        'admin_upload_fail': '上传失败',
+        'admin_img_too_large': '图片不能超过5MB',
+        'admin_detected': '识别为：',
+        'admin_label_tg': '联系TG（选填）',
+        'admin_placeholder_tg': 'Telegram用户名，如 violet27Team',
+
+        # Footer
+        'footer_text': '© 2026 27c.site · 网盘资源分享站',
+        'footer_home': '首页',
+        'footer_about': '关于',
+        'footer_privacy': '隐私政策',
+        'footer_blog': '博客',
+
+        # Cloud types (short badge names)
+        'cloud_quark': '夸克', 'cloud_baidu': '百度', 'cloud_aliyun': '阿里云',
+        'cloud_123pan': '123云', 'cloud_xunlei': '迅雷', 'cloud_lanzou': '蓝奏',
+        'cloud_guangya': '光鸭', 'cloud_115pan': '115', 'cloud_weiyun': '微云',
+        'cloud_ctfile': '城通', 'cloud_mega': 'Mega', 'cloud_gdrive': 'GDrive',
+        'cloud_dropbox': 'Dropbox', 'cloud_onedrive': 'OneDrive', 'cloud_pcloud': 'pCloud',
+        'cloud_mediafire': 'MediaFire', 'cloud_wetransfer': 'WeTransfer', 'cloud_box': 'Box',
+        'cloud_other': '其他',
+
+        # Cloud full names (for download tip)
+        'cloud_full_quark': '夸克网盘', 'cloud_full_baidu': '百度网盘',
+        'cloud_full_aliyun': '阿里云盘', 'cloud_full_123pan': '123云盘',
+        'cloud_full_xunlei': '迅雷网盘', 'cloud_full_lanzou': '蓝奏云',
+        'cloud_full_guangya': '光鸭网盘', 'cloud_full_115pan': '115云盘',
+        'cloud_full_weiyun': '微云', 'cloud_full_ctfile': '城通网盘',
+        'cloud_full_mega': 'Mega', 'cloud_full_gdrive': 'Google Drive',
+        'cloud_full_dropbox': 'Dropbox', 'cloud_full_other': '其他网盘',
+    },
+    'en': {
+        # Nav
+        'nav_home': 'Software',
+        'nav_admin': 'Dashboard',
+        'nav_logout': 'Logout',
+        'nav_login': 'Login',
+        'nav_register': 'Sign Up',
+        'lang_switch': '中文',
+
+        # Hero / Index
+        'hero_banner1': 'Resources',
+        'hero_banner2': 'Multi-Cloud',
+        'hero_title': 'Cloud Resource Hub',
+        'hero_desc': 'Curated Software · Free Downloads · Multi-Cloud',
+        'search_placeholder': 'Search software...',
+        'cat_all': 'All',
+        'price_free': 'Free',
+        'view_detail': 'View Details',
+        'no_products': 'No resources found',
+        'try_other_search': 'Try different keywords',
+
+        # Blog banner
+        'blog_title': 'qi yuan · Personal Blog',
+        'blog_desc': 'Tutorials · Productivity · Software Reviews',
+        'blog_btn': 'Visit →',
+
+        # Product detail
+        'back_to_list': '← Back to List',
+        'free_download': 'Free Download',
+        'no_link': 'No Download Link',
+        'resource_detail': 'Description',
+        'download_tip': 'Click above to download from {cloud}',
+        'reviews_title': 'Reviews ({count})',
+        'write_review': 'Write a Review',
+        'review_login': 'Login to leave a review',
+        'review_placeholder': 'Share your experience...',
+        'submit_review': 'Submit Review',
+        'no_reviews': 'No reviews yet. Be the first!',
+        'rating_5': 'Excellent',
+        'rating_4': 'Good',
+        'rating_3': 'Average',
+        'rating_2': 'Poor',
+        'rating_1': 'Terrible',
+
+        # Proxy download service
+        'proxy_title': 'Proxy Download Service',
+        'proxy_desc': 'Resources are free to download directly via the button above. For proxy download service (admin downloads and sends the file to you), please pay and contact the admin.',
+        'proxy_contact': 'Contact Admin',
+        'proxy_tg': 'Telegram: @violet27Team',
+        'proxy_note': 'After payment, the file will be sent via Telegram',
+
+        # Login
+        'login_title': 'Login',
+        'login_sub': 'Welcome back to 27c.site',
+        'label_username': 'Username or Email',
+        'placeholder_username': 'Enter username or email',
+        'label_password': 'Password',
+        'placeholder_password': 'Enter password',
+        'btn_login': 'Login',
+        'no_account': "Don't have an account?",
+        'register_now': 'Sign up',
+
+        # Register
+        'register_title': 'Sign Up',
+        'register_sub': 'Create your 27c.site account',
+        'label_email': 'Email',
+        'placeholder_email': 'your@email.com',
+        'placeholder_username_len': '3-50 characters',
+        'placeholder_min6': 'At least 6 characters',
+        'label_confirm_pw': 'Confirm Password',
+        'placeholder_confirm_pw': 'Re-enter password',
+        'btn_register': 'Sign Up',
+        'has_account': 'Already have an account?',
+        'login_now': 'Login',
+
+        # Admin
+        'admin_title': 'Dashboard',
+        'admin_back': '← Back to Home',
+        'admin_my_resources': 'My Resources',
+        'admin_active': 'Active',
+        'admin_my_list': 'My Resources',
+        'admin_add': '+ Add Resource',
+        'admin_th_id': 'ID',
+        'admin_th_img': 'Image',
+        'admin_th_name': 'Name',
+        'admin_th_cat': 'Category',
+        'admin_th_cloud': 'Cloud',
+        'admin_th_status': 'Status',
+        'admin_th_actions': 'Actions',
+        'admin_status_on': 'Active',
+        'admin_status_off': 'Inactive',
+        'admin_edit': 'Edit',
+        'admin_delete': 'Delete',
+        'admin_confirm_delete': 'Delete this resource?',
+        'admin_no_resources': 'No resources yet',
+        'admin_add_first': 'Add your first resource',
+        'admin_modal_add': 'Add Resource',
+        'admin_modal_edit': 'Edit Resource',
+        'admin_label_name': 'Resource Name *',
+        'admin_placeholder_name': 'e.g. Adobe Creative Suite',
+        'admin_label_desc': 'Description',
+        'admin_placeholder_desc': 'Resource description',
+        'admin_label_cat': 'Category',
+        'admin_select_cat': '-- Select Category --',
+        'admin_new_cat': '+ New Category',
+        'admin_placeholder_new_cat': 'Enter new category name',
+        'admin_label_img': 'Image',
+        'admin_label_thumb': 'Thumbnail (optional, uses image if empty)',
+        'admin_tab_upload': 'Upload',
+        'admin_tab_url': 'URL',
+        'admin_upload_hint1': 'Click or drag image here',
+        'admin_upload_hint2': 'JPG / PNG / WebP, max 5MB',
+        'admin_delete_img': 'Remove',
+        'admin_label_link': 'Download Link *',
+        'admin_placeholder_link': 'Quark/Baidu/Google Drive/Dropbox etc.',
+        'admin_label_active': 'Active',
+        'admin_btn_cancel': 'Cancel',
+        'admin_btn_save': 'Save',
+        'admin_uploading': 'Uploading...',
+        'admin_upload_fail': 'Upload failed',
+        'admin_img_too_large': 'Image must be under 5MB',
+        'admin_detected': 'Detected: ',
+        'admin_label_tg': 'Contact TG (optional)',
+        'admin_placeholder_tg': 'Telegram username, e.g. violet27Team',
+
+        # Footer
+        'footer_text': '© 2026 27c.site · Cloud Resource Hub',
+        'footer_home': 'Home',
+        'footer_about': 'About',
+        'footer_privacy': 'Privacy',
+        'footer_blog': 'Blog',
+
+        # Cloud types (short badge names)
+        'cloud_quark': 'Quark', 'cloud_baidu': 'Baidu', 'cloud_aliyun': 'Alibaba',
+        'cloud_123pan': '123Pan', 'cloud_xunlei': 'Xunlei', 'cloud_lanzou': 'Lanzou',
+        'cloud_guangya': 'Guangya', 'cloud_115pan': '115', 'cloud_weiyun': 'Weiyun',
+        'cloud_ctfile': 'CTFile', 'cloud_mega': 'Mega', 'cloud_gdrive': 'GDrive',
+        'cloud_dropbox': 'Dropbox', 'cloud_onedrive': 'OneDrive', 'cloud_pcloud': 'pCloud',
+        'cloud_mediafire': 'MediaFire', 'cloud_wetransfer': 'WeTransfer', 'cloud_box': 'Box',
+        'cloud_other': 'Other',
+
+        # Cloud full names
+        'cloud_full_quark': 'Quark Cloud', 'cloud_full_baidu': 'Baidu Netdisk',
+        'cloud_full_aliyun': 'Alibaba Cloud Drive', 'cloud_full_123pan': '123Pan',
+        'cloud_full_xunlei': 'Xunlei Cloud', 'cloud_full_lanzou': 'Lanzou',
+        'cloud_full_guangya': 'Guangya Cloud', 'cloud_full_115pan': '115 Cloud',
+        'cloud_full_weiyun': 'Weiyun', 'cloud_full_ctfile': 'CTFile',
+        'cloud_full_mega': 'Mega', 'cloud_full_gdrive': 'Google Drive',
+        'cloud_full_dropbox': 'Dropbox', 'cloud_full_other': 'Other Cloud',
+    },
+}
+
+
+def get_translations(lang='zh'):
+    return TRANSLATIONS.get(lang, TRANSLATIONS['zh'])
+
+
+def t(lang, key, **kwargs):
+    """Get translation with optional format kwargs."""
+    text = TRANSLATIONS.get(lang, TRANSLATIONS['zh']).get(key, key)
+    if kwargs:
+        text = text.format(**kwargs)
+    return text

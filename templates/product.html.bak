@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - 2元软件商店 | 27c.site{% endblock %}
+{% block meta_desc %}{{ product.name }}，仅售¥{{ "%.2f"|format(product.price) }}，{{ {"quark":"夸克","baidu":"百度","aliyun":"阿里云","123pan":"123云","xunlei":"迅雷","lanzou":"蓝奏","other":"网盘"}.get(product.cloud_type, "网盘") }}自动发货。{{ product.description[:80] if product.description else '' }}{% endblock %}
+{% block og_title %}{{ product.name }} - 27c.site{% endblock %}
+{% block og_desc %}{{ product.name }}，全场2元，{{ {"quark":"夸克","baidu":"百度","aliyun":"阿里云","123pan":"123云","xunlei":"迅雷","lanzou":"蓝奏","other":"网盘"}.get(product.cloud_type, "网盘") }}自动发货。{% endblock %}
+
+{% block content %}
+<div class="product-page">
+    <div class="product-back">
+        <a href="{{ url_for('index') }}">&larr; 返回列表</a>
+    </div>
+
+    <div class="product-detail">
+        <div class="product-image">
+            {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            {% else %}
+                <div class="product-img-placeholder">
+                    <span>{{ product.name[:2] }}</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="product-info">
+            <h1 class="product-title">{{ product.name }}</h1>
+
+            {% if product.category %}
+                <span class="product-category">{{ product.category }}</span>
+                {% if product.cloud_type %}
+                    <span class="cloud-badge cloud-{{ product.cloud_type }}">{{ {"quark":"夸克","baidu":"百度","aliyun":"阿里云","123pan":"123云","xunlei":"迅雷","lanzou":"蓝奏","guangya":"光鸭","115pan":"115","other":"其他"}.get(product.cloud_type, "网盘") }}</span>
+                {% endif %}
+            {% endif %}
+
+            <div class="product-price-box">
+                {% if is_new_user %}
+                    <span class="product-price-original">¥{{ "%.2f"|format(product.price) }}</span>
+                    <span class="product-price product-price-discount">¥{{ "%.2f"|format(product.price / 2) }}</span>
+                    <span class="new-badge">新人半价</span>
+                {% else %}
+                    <span class="product-price">¥{{ "%.2f"|format(product.price) }}</span>
+                {% endif %}
+            </div>
+
+            {% if product.description %}
+                <div class="product-desc">
+                    <h3>商品描述</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+            {% endif %}
+
+            <div class="product-actions">
+                {% if current_user %}
+                    <form method="POST" action="{{ url_for('buy', product_id=product.id) }}">
+                        <button type="submit" class="btn btn-primary btn-buy">
+                            {% if is_new_user %}
+                                立即购买 · ¥{{ "%.2f"|format(product.price / 2) }}
+                            {% else %}
+                                立即购买 · ¥{{ "%.2f"|format(product.price) }}
+                            {% endif %}
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{{ url_for('login', next=url_for('product_detail', product_id=product.id)) }}"
+                       class="btn btn-primary btn-buy">
+                        登录后购买
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="product-meta">
+                <p>购买后自动发送{{ {"quark":"夸克","baidu":"百度","aliyun":"阿里云","123pan":"123云","xunlei":"迅雷","lanzou":"蓝奏","other":"网盘"}.get(product.cloud_type, "网盘") }}下载链接到您的订单页面</p>
+                {% if is_new_user %}
+                    <p class="new-user-tip">🎉 新用户首单享半价优惠！</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <h2 class="reviews-title">用户评价 ({{ reviews|length }})</h2>
+
+        {% if current_user and has_purchased %}
+            <div class="review-form">
+                <h3>发表评价</h3>
+                <form method="POST" action="{{ url_for('add_review', product_id=product.id) }}">
+                    <div class="rating-input">
+                        <label>评分：</label>
+                        <select name="rating" required>
+                            <option value="5">⭐⭐⭐⭐⭐ 非常满意</option>
+                            <option value="4">⭐⭐⭐⭐ 满意</option>
+                            <option value="3">⭐⭐⭐ 一般</option>
+                            <option value="2">⭐⭐ 不满意</option>
+                            <option value="1">⭐ 非常不满意</option>
+                        </select>
+                    </div>
+                    <textarea name="content" class="review-textarea" placeholder="分享您的使用体验..." required></textarea>
+                    <button type="submit" class="btn btn-primary">提交评价</button>
+                </form>
+            </div>
+        {% elif current_user and not has_purchased %}
+            <div class="review-login-tip">
+                <p>购买后即可发表评价</p>
+            </div>
+        {% else %}
+            <div class="review-login-tip">
+                <a href="{{ url_for('login') }}">登录</a>后查看完整评价
+            </div>
+        {% endif %}
+
+        <div class="reviews-list">
+            {% for review in reviews %}
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-user">{{ review.username }}</span>
+                        <span class="review-rating">{{ '⭐' * review.rating }}</span>
+                        <span class="review-date">{{ review.created_at.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    <p class="review-content">{{ review.content }}</p>
+                </div>
+            {% else %}
+                <p class="no-reviews">暂无评价，成为第一个评价的人吧！</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
